@@ -22,16 +22,16 @@ export default function NovaCultura() {
       try {
         const item = JSON.parse(data as string);
         // item structure: [id, nome, safra, ...] or talhao structure used elsewhere
-        setCulturaId(item[0]);
-        setNome(item[1] || item[2] || "");
-        setSafra(item[2] || "");
-        setArea(item[4]?.toString() || item[1]?.toString() || "");
+        setCulturaId(item.id || item[0]);
+        setNome(item.nome || item[1] || item.tipocultura || "");
+        setSafra(item.safra || item[2] || "");
+        setArea(item.area?.toString() || item[4]?.toString() || item[1]?.toString() || "");
         setDataPlantio(item[3] || "");
       } catch (e) {
         console.error("Erro ao carregar dados da cultura", e);
       }
     }
-  }, [params]);
+  }, [params.culturaData, params.talhaoData]);
 
   const handleSave = async () => {
     if (!nome || !safra || !area) {
@@ -39,22 +39,21 @@ export default function NovaCultura() {
       return;
     }
 
-    // Montando o payload estruturado para a tabela de talhões
+    // Montando o payload estruturado
     const payload = {
-      cultura: nome,
+      nome: nome,
       safra: safra,
-      status: status,
-      data_plantio: dataPlantio || new Date().toISOString().split("T")[0],
       area: parseFloat(area) || 0,
-      volume: 65, // Valor padrão de estimativa mapeado no seu item[4]
+      status: status,
+      data_plantio: dataPlantio
     };
 
     try {
       // Alterado para usar POST ou PUT conforme presença de id
-      let url = "http://localhost:8000/talhoes/";
+      let url = "http://192.168.1.117:8000/culturas/";
       let method = "POST";
       if (culturaId) {
-        url = `http://localhost:8000/talhoes/${culturaId}`;
+        url = `http://192.168.1.117:8000/culturas/${culturaId}`;
         method = "PUT";
       }
 

@@ -27,7 +27,7 @@ export default function NovoGasto() {
     }
 
     try {
-      const response = await fetch("http://localhost:8000/custos/", {
+      const response = await fetch("http://192.168.1.117:8000/custos/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

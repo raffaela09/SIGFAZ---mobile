@@ -20,9 +20,9 @@ export default function Tab() {
 
   useFocusEffect(
     useCallback(() => {
-      fetch("http://localhost:8000/dashboard/")
+      fetch("http://192.168.1.117:8000/dashboard/")
         .then(res => res.json())
-        .then(data => setDashboardData(data))
+        .then(data => { if (data) setDashboardData(data); })
         .catch(err => console.log('Erro ao buscar dashboard:', err));
     }, [])
   );
@@ -67,7 +67,7 @@ export default function Tab() {
                 </View>
               </View>
               <Text style={styles.kpiLabel}>Área Total</Text>
-              <Text style={styles.kpiValue}>{dashboardData.areaTotal} ha</Text>
+              <Text style={styles.kpiValue}>{dashboardData?.areaTotal || 0} ha</Text>
             </View>
 
             <View style={styles.kpiCard}>
@@ -80,7 +80,7 @@ export default function Tab() {
                 </View>
               </View>
               <Text style={styles.kpiLabel}>Produção Est.</Text>
-              <Text style={styles.kpiValue}>{dashboardData.producaoEst} t</Text>
+              <Text style={styles.kpiValue}>{dashboardData?.producaoEst || 0} t</Text>
             </View>
           </View>
         </View>
@@ -133,7 +133,7 @@ export default function Tab() {
             </View>
             <View style={styles.chartMock}>
               <View style={styles.lineChartMock}>
-                {dashboardData.graficoProdutividade.map((val: any, idx: number) => (
+                {(dashboardData?.graficoProdutividade || []).map((val: any, idx: number) => (
                   <View key={idx} style={[styles.barMock, { height: val, backgroundColor: '#4ade80' }]} />
                 ))}
               </View>
@@ -156,7 +156,7 @@ export default function Tab() {
             </View>
             <View style={styles.chartMock}>
               <View style={styles.barChartMock}>
-                {dashboardData.graficoCustos.map((item: any, idx: number) => (
+                {(dashboardData?.graficoCustos || []).map((item: any, idx: number) => (
                   <View key={idx} style={styles.barColumn}>
                     <View style={[styles.bar, { height: item.valor }]} />
                     <Text style={styles.chartXAxisText}>{item.nome}</Text>

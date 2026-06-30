@@ -22,7 +22,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="talhoes"
         options={{
-          title: 'Talões',
+          title: 'Talhoes',
           tabBarIcon: ({ color }) => <FontAwesome5 size={20} name="layer-group" color={color} />,
         }}
       />
@@ -45,24 +45,6 @@ export default function TabLayout() {
         options={{
           title: 'Lucro',
           tabBarIcon: ({ color }) => <FontAwesome size={22} name="bar-chart" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="new"
-        options={{
-          href: null, // Mantém a rota ativa mas esconde do tab bar
-        }}
-      />
-      <Tabs.Screen
-        name="relatorios"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          href: null,
         }}
       />
     </Tabs>

@@ -26,7 +26,7 @@ export default function CulturasScreen() {
     try {
       setLoading(true);
       // Rota correta apontando para o seu APIRouter do backend
-      const response = await fetch("http://localhost:8000/culturas/");
+      const response = await fetch("http://192.168.1.117:8000/culturas/");
       if (response.ok) {
       const data = await response.json();
       setCulturas(data);
@@ -58,14 +58,15 @@ export default function CulturasScreen() {
           style: "destructive",
           onPress: async () => {
             try {
-              const response = await fetch(`http://localhost:8000/culturas/${id}`, {
+              const response = await fetch(`http://192.168.1.117:8000/culturas/${id}`, {
                 method: "DELETE",
               });
               if (response.ok) {
                 Alert.alert("Sucesso", "Ciclo excluído.");
-                        fetchCulturas();
+                fetchCulturas();
               } else {
-                Alert.alert("Erro", "Não foi possível excluir.");
+                const errorData = await response.json().catch(() => ({}));
+                Alert.alert("Erro", errorData.detail || "Não foi possível excluir o ciclo de cultivo.");
               }
             } catch (e) {
               Alert.alert("Erro", "Falha ao excluir.");
@@ -77,10 +78,10 @@ export default function CulturasScreen() {
   };
 
   // Filtragem corrigida baseando-se estritamente na estrutura retornada por SELECT * FROM Cultura
-  const filteredCulturas = culturas.filter((item) => {
+  const filteredCulturas = (culturas || []).filter((item) => {
     // Mapeamento correto com fallback seguro para strings
-    const cultura = item[1] ? String(item[1]).toLowerCase() : "";
-    const safra = item[2] ? String(item[2]).toLowerCase() : "";
+    const cultura = item.nome ? String(item.nome).toLowerCase() : "";
+    const safra = item.safra ? String(item.safra).toLowerCase() : "";
 
     const matchesSearch =
       cultura.includes(searchText.toLowerCase()) || safra.includes(searchText.toLowerCase());
@@ -172,15 +173,13 @@ export default function CulturasScreen() {
           <Text style={styles.emptyText}>Nenhum ciclo encontrado.</Text>
         ) : (
           filteredCulturas.map((item, index) => {
-            // AJUSTE CRÍTICO: Mapeamento baseado no SELECT * FROM Cultura (id, nome, safra)
-            const id = item[0];
-            const cultura = item[1] || "Não informada";
-            const safra = item[2] || "Não informada";
+            const id = item.id;
+            const cultura = item.nome || "Não informada";
+            const safra = item.safra || "Não informada";
             
-            // Fallbacks visuais fixos para campos que não existem na tabela do banco atualmente
-            const area = 45; 
-            const statusCiclo = "Crescimento";
-            const dataPlantio = "2026-10-15";
+            const area = item.area ?? 45; 
+            const status = item.status || "Crescimento";
+            const dataPlantio = item.data_plantio || "Não informada";
             const rendimentoMedio = 65;
             const producaoEstimada = Math.round(area * rendimentoMedio);
 
@@ -198,7 +197,7 @@ export default function CulturasScreen() {
                   </View>
                   <View style={[styles.statusPill, { backgroundColor: statusBg }]}>
                     <Text style={[styles.statusText, { color: statusText }]}>
-                      {statusCiclo}
+                      {status}
                     </Text>
                   </View>
                 </View>
@@ -212,7 +211,7 @@ export default function CulturasScreen() {
                     <View style={styles.detailCol}>
                       <Text style={styles.detailLabel}>Plantio Est.</Text>
                       <Text style={styles.detailValue}>
-                        {dataPlantio.split("-").reverse().join("/")}
+                        {String(dataPlantio).split("-").reverse().join("/")}
                       </Text>
                     </View>
                   </View>

@@ -43,14 +43,15 @@ export default function NewFazendaScreen() {
       nome,
       localizacao,
       areaTotal: Number(areaTotal),
+      area_total_hectares: Number(areaTotal),
       status,
     };
 
     try {
       const response = await fetch(
         editing
-          ? `http://localhost:8000/fazendas/${params.id}`
-          : "http://localhost:8000/fazendas/",
+          ? `http://192.168.1.117:8000/fazendas/${params.id}`
+          : "http://192.168.1.117:8000/fazendas/",
         {
           method: editing ? "PUT" : "POST",
           headers: {

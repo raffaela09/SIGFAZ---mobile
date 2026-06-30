@@ -21,7 +21,7 @@ export default function Login() {
       }
 
       const payload = { email, senha };
-      const API_URL = "http://localhost:8000/auth/login"; // Seu IP local
+      const API_URL = "http://192.168.1.117:8000/auth/login"; // Seu IP local
       
       const response = await fetch(API_URL, {
         method: "POST",

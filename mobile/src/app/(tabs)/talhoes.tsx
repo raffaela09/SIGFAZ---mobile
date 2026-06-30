@@ -20,11 +20,10 @@ export default function Tab() {
   const fetchTalhoes = async () => {
     try {
       setLoading(true);
-      const API_URL = "http://localhost:8000/talhoes/";
+      const API_URL = "http://192.168.1.117:8000/talhoes/";
       const response = await fetch(API_URL);
       if (response.ok) {
         const data = await response.json();
-        // O backend retorna um array de arrays: [id, area, tipoCultura, idade, volumeEstimado, idFazenda]
         setTalhoes(data);
       }
     } catch (error) {
@@ -41,17 +40,17 @@ export default function Tab() {
   );
 
   // Filtra os talhões de acordo com o texto digitado na busca (baseado na cultura/nome) e filtro
-  const filteredTalhoes = talhoes.filter((item) => {
-    const nomeOuCultura = item[2] ? item[2].toLowerCase() : "";
+  const filteredTalhoes = (talhoes || []).filter((item) => {
+    const nomeOuCultura = item.tipocultura ? item.tipocultura.toLowerCase() : "";
     const matchesSearch = nomeOuCultura.includes(searchText.toLowerCase());
-    const matchesFiltro = selectedFiltro === "Todos" || (item[2] && item[2].toLowerCase() === selectedFiltro.toLowerCase());
+    const matchesFiltro = selectedFiltro === "Todos" || (item.tipocultura && item.tipocultura.toLowerCase() === selectedFiltro.toLowerCase());
     return matchesSearch && matchesFiltro;
   });
 
   const saveAtividade = async () => {
     if(!atividadeDesc) return;
     try {
-      await fetch("http://localhost:8000/atividades/", {
+      await fetch("http://192.168.1.117:8000/atividades/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -123,15 +122,16 @@ export default function Tab() {
           <Text style={{ marginTop: 20, color: "#6B7280" }}>Nenhum talhão encontrado.</Text>
         ) : (
           filteredTalhoes.map((item, index) => {
-            const id = item[0];
-            const area = item[1];
-            const cultura = item[2];
-            const volume = item[4];
+            const id = item.id;
+            const area = item.area;
+            const cultura = item.tipocultura;
+            const volume = item.volumeestimado || 0;
+            const nomeTalhao = item.nome || cultura || `Talhão #${id}`;
 
             return (
               <TalhaoCard
                 key={id || index}
-                nome={cultura || `Talhão #${id}`} // Usa a cultura como nome
+                nome={nomeTalhao}
                 area={`${area} ha`}
                 coordenadas="Lat: --, Lng: --"
                 status="Ativo"
@@ -158,7 +158,7 @@ export default function Tab() {
                         style: "destructive",
                         onPress: async () => {
                           try {
-                            const response = await fetch(`http://localhost:8000/talhoes/${id}`, { method: 'DELETE' });
+                            const response = await fetch(`http://192.168.1.117:8000/talhoes/${id}`, { method: 'DELETE' });
                             if(response.ok) {
                               fetchTalhoes();
                             } else {

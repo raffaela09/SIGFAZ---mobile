@@ -19,7 +19,8 @@ interface Fazenda {
   id: number;
   nome: string;
   localizacao: string;
-  areaTotal: number;
+  areaTotal?: number;
+  area_total_hectares?: number;
   status: string;
 }
 
@@ -32,7 +33,7 @@ export default function FazendasScreen() {
   const fetchFazendas = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:8000/fazendas/");
+      const response = await fetch("http://192.168.1.117:8000/fazendas/");
       if (response.ok) {
         const data = await response.json();
         setFazendas(data);
@@ -58,7 +59,7 @@ export default function FazendasScreen() {
         id: fazenda.id,
         nome: fazenda.nome,
         localizacao: fazenda.localizacao,
-        areaTotal: fazenda.areaTotal,
+        areaTotal: fazenda.areaTotal || fazenda.area_total_hectares || 0,
         status: fazenda.status,
       },
     });
@@ -75,14 +76,15 @@ export default function FazendasScreen() {
           style: "destructive",
           onPress: async () => {
             try {
-              const response = await fetch(`http://localhost:8000/fazendas/${id}`, {
+              const response = await fetch(`http://192.168.1.117:8000/fazendas/${id}`, {
                 method: "DELETE",
               });
               if (response.ok) {
                 Alert.alert("Sucesso", "Fazenda excluída.");
                 fetchFazendas();
               } else {
-                Alert.alert("Erro", "Não foi possível excluir a fazenda.");
+                const errorData = await response.json().catch(() => ({}));
+                Alert.alert("Erro", errorData.detail || "Não foi possível excluir a fazenda.");
               }
             } catch (e) {
               Alert.alert("Erro", "Falha de conexão.");
@@ -94,7 +96,7 @@ export default function FazendasScreen() {
   };
 
   // Filtragem local
-  const filteredFazendas = fazendas.filter((f) => {
+  const filteredFazendas = (fazendas || []).filter((f) => {
     const matchesSearch = f.nome.toLowerCase().includes(searchText.toLowerCase());
     if (selectedFiltro === "Todos") return matchesSearch;
     if (selectedFiltro === "Ativas") return matchesSearch && f.status === "Ativa";
@@ -163,16 +165,16 @@ export default function FazendasScreen() {
                 <View
                   style={[
                     styles.statusPill,
-                    { backgroundColor: item.status === "Ativa" ? "#DCFCE7" : "#FEE2E2" },
+                    { backgroundColor: (item.status || "Ativa") === "Ativa" ? "#DCFCE7" : "#FEE2E2" },
                   ]}
                 >
                   <Text
                     style={[
                       styles.statusText,
-                      { color: item.status === "Ativa" ? "#16A34A" : "#DC2626" },
+                      { color: (item.status || "Ativa") === "Ativa" ? "#16A34A" : "#DC2626" },
                     ]}
                   >
-                    {item.status}
+                    {item.status || "Ativa"}
                   </Text>
                 </View>
               </View>
@@ -184,7 +186,7 @@ export default function FazendasScreen() {
                     <Text style={styles.infoLabel}>ÁREA TOTAL</Text>
                     <View style={styles.infoValueRow}>
                       <FontAwesome5 name="map-marked-alt" size={14} color="#22C358FF" style={{ marginRight: 6 }} />
-                      <Text style={styles.infoValue}>{item.areaTotal.toLocaleString("pt-BR")} ha</Text>
+                      <Text style={styles.infoValue}>{(item.areaTotal || item.area_total_hectares || 0).toLocaleString("pt-BR")} ha</Text>
                     </View>
                   </View>
                   <View style={styles.infoCol}>

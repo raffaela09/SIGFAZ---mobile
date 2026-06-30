@@ -37,13 +37,13 @@ export default function GastosScreen() {
   const fetchCustos = async () => {
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:8000/custos/");
+      const res = await fetch("http://192.168.1.117:8000/custos/");
       if (res.ok) {
         const data = await res.json();
-        setCustos(data);
+        setCustos(data || []);
         
         // Inicializa o accordion abrindo a primeira categoria encontrada por padrão
-        if (data.length > 0) {
+        if (data && data.length > 0) {
           setExpandedCategories((prev) => ({
             [data[0].categoria]: true,
             ...prev
@@ -71,6 +71,36 @@ export default function GastosScreen() {
     }));
   };
 
+  const handleDeleteGasto = (id: number, descricao: string) => {
+    Alert.alert(
+      "Excluir Gasto",
+      `Tem certeza que deseja excluir "${descricao}"?`,
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Excluir",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              const response = await fetch(`http://192.168.1.117:8000/custos/${id}`, {
+                method: "DELETE",
+              });
+              if (response.ok) {
+                Alert.alert("Sucesso", "Gasto excluído.");
+                fetchCustos();
+              } else {
+                const errorData = await response.json().catch(() => ({}));
+                Alert.alert("Erro", errorData.detail || "Não foi possível excluir o gasto.");
+              }
+            } catch (e) {
+              Alert.alert("Erro", "Falha de conexão.");
+            }
+          },
+        },
+      ]
+    );
+  };
+
   // Helper para padronizar estilização por Categoria
   const getCategoryConfig = (categoria: string) => {
     const catLower = categoria.toLowerCase();
@@ -87,7 +117,7 @@ export default function GastosScreen() {
   };
 
   // Filtragem local dos lançamentos
-  const filteredCustos = custos.filter((c) => {
+  const filteredCustos = (custos || []).filter((c) => {
     const desc = c.descricao ? c.descricao.toLowerCase() : "";
     const cat = c.categoria ? c.categoria.toLowerCase() : "";
     const matchesSearch = desc.includes(searchText.toLowerCase()) || cat.includes(searchText.toLowerCase());
@@ -97,9 +127,9 @@ export default function GastosScreen() {
   });
 
   // Lista de categorias únicas encontradas no banco para renderizar os blocos dinamicamente
-  const categoriasUnicas = Array.from(new Set(custos.map((c) => c.categoria)));
+  const categoriasUnicas = Array.from(new Set((custos || []).map((c) => c.categoria)));
 
-  const totalPeriodo = custos.reduce((acc, cur) => acc + (cur.valor || 0), 0);
+  const totalPeriodo = (custos || []).reduce((acc, cur) => acc + (cur.valor || 0), 0);
   const custoMedioHa = totalPeriodo > 0 ? (totalPeriodo / 182.5) : 0;
 
   return (
@@ -191,7 +221,7 @@ export default function GastosScreen() {
                         </Text>
                       </View>
                       <Text style={styles.launchMeta}>
-                        {c.data.split("-").reverse().join("/")} • Fazenda Progresso • {c.categoria}
+                        {String(c.data || "").split("-").reverse().join("/")} • Fazenda Progresso • {c.categoria}
                       </Text>
                     </View>
                   </View>
@@ -205,7 +235,7 @@ export default function GastosScreen() {
 
           {categoriasUnicas.map((cat) => {
             const config = getCategoryConfig(cat);
-            const itensCategoria = custos.filter(c => c.categoria === cat);
+            const itensCategoria = (custos || []).filter(c => c.categoria === cat);
             const totalCategoria = itensCategoria.reduce((acc, cur) => acc + cur.valor, 0);
             const estaAberto = !!expandedCategories[cat];
 
@@ -238,8 +268,15 @@ export default function GastosScreen() {
                   <View style={styles.catDetailBox}>
                     {itensCategoria.map(c => (
                       <View key={c.id} style={styles.catDetailRow}>
-                        <Text style={styles.catDetailName} numberOfLines={1}>{c.descricao}</Text>
-                        <Text style={styles.catDetailVal}>R$ {c.valor.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</Text>
+                        <View style={{ flex: 1, paddingRight: 10 }}>
+                          <Text style={styles.catDetailName} numberOfLines={1}>{c.descricao}</Text>
+                        </View>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                          <Text style={styles.catDetailVal}>R$ {c.valor.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</Text>
+                          <TouchableOpacity onPress={() => handleDeleteGasto(c.id, c.descricao)}>
+                            <Feather name="trash-2" size={14} color="#EF4444" />
+                          </TouchableOpacity>
+                        </View>
                       </View>
                     ))}
                   </View>

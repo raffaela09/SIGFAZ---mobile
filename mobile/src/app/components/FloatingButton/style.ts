@@ -5,7 +5,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 20,
     bottom: 20,
-    backgroundColor: '#22C358FF', // O verde padrão que estás a usar
+    backgroundColor: '#22C358FF', 
     width: 56,
     height: 56,
     borderRadius: 28,
@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 5,
-    elevation: 5, // Sombra para dispositivos Android
+    elevation: 5, 
   },
 });
 

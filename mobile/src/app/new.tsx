@@ -17,6 +17,12 @@ export default function Tab() {
   const [maquinario, setMaquinario] = useState("");
   const [operador, setOperador] = useState("");
 
+  const [volumeEstimado, setVolumeEstimado] = useState(0);
+  const [idade, setIdade] = useState(0);
+  const [idFazenda, setIdFazenda] = useState(1);
+  const [statusCiclo, setStatusCiclo] = useState("Plantio");
+  const [safra, setSafra] = useState("Não informada");
+
   const [insumos, setInsumos] = useState(["Fertilizante NPK", "Semente Soja RR"]);
   const [novoInsumo, setNovoInsumo] = useState("");
   const [mostraInputInsumo, setMostraInputInsumo] = useState(false);
@@ -25,12 +31,18 @@ export default function Tab() {
     if (params.talhaoData) {
       try {
         const item = JSON.parse(params.talhaoData as string);
-        setTalhaoId(item[0]);
-        setArea(item[1]?.toString() || "");
-        setCultura(item[2] || "");
-        setNome(item[2] || `Talhão #${item[0]}`); 
-        setMaquinario(item[6] || "");
-        setOperador(item[7] || "");
+        setTalhaoId(item.id);
+        setArea(item.area?.toString() || "");
+        setCultura(item.tipocultura || "");
+        setNome(item.nome || item.tipocultura || `Talhão #${item.id}`); 
+        setMaquinario(item.maquinario || "");
+        setOperador(item.operador || "");
+        if (item.data_plantio) setDataPlantio(item.data_plantio);
+        if (item.volumeestimado !== undefined) setVolumeEstimado(item.volumeestimado);
+        if (item.idade !== undefined) setIdade(item.idade);
+        if (item.idfazenda !== undefined) setIdFazenda(item.idfazenda);
+        if (item.status_ciclo) setStatusCiclo(item.status_ciclo);
+        if (item.safra) setSafra(item.safra);
       } catch (e) {
         console.error("Erro ao carregar dados do talhão", e);
       }
@@ -52,21 +64,25 @@ export default function Tab() {
   const handleSave = async () => {
     try {
       const payload = {
+        nome: nome || cultura,
         area: parseFloat(area) || 0,
-        tipoCultura: cultura || nome, // Fallback para nome se cultura estiver vazia
-        idade: 0,
-        volumeEstimado: 0,
-        idFazenda: 1, // ID mockado
+        tipoCultura: cultura, 
+        idade: idade,
+        volumeEstimado: volumeEstimado,
+        idFazenda: idFazenda, 
         maquinario: maquinario,
         operador: operador,
+        status_ciclo: statusCiclo,
+        data_plantio: dataPlantio,
+        safra: safra
       };
 
       // Utilizando o IP da sua máquina na rede (funciona tanto no emulador quanto no celular)
-      let API_URL = "http://localhost:8000/talhoes/";
+      let API_URL = "http://192.168.1.117:8000/talhoes/";
       let method = "POST";
       
       if (talhaoId) {
-        API_URL = `http://localhost:8000/talhoes/${talhaoId}`;
+        API_URL = `http://192.168.1.117:8000/talhoes/${talhaoId}`;
         method = "PUT";
       }
       
