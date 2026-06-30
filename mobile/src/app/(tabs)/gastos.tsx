@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Alert,
+  Platform
 } from "react-native";
 import { useFocusEffect, router } from "expo-router";
 import { FontAwesome5, Feather } from "@expo/vector-icons";
@@ -37,7 +38,7 @@ export default function GastosScreen() {
   const fetchCustos = async () => {
     try {
       setLoading(true);
-      const res = await fetch("http://192.168.1.117:8000/custos/");
+      const res = await fetch("http://localhost:8000/custos/");
       if (res.ok) {
         const data = await res.json();
         setCustos(data || []);
@@ -72,33 +73,41 @@ export default function GastosScreen() {
   };
 
   const handleDeleteGasto = (id: number, descricao: string) => {
-    Alert.alert(
-      "Excluir Gasto",
-      `Tem certeza que deseja excluir "${descricao}"?`,
-      [
-        { text: "Cancelar", style: "cancel" },
-        {
-          text: "Excluir",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              const response = await fetch(`http://192.168.1.117:8000/custos/${id}`, {
-                method: "DELETE",
-              });
-              if (response.ok) {
-                Alert.alert("Sucesso", "Gasto excluído.");
-                fetchCustos();
-              } else {
-                const errorData = await response.json().catch(() => ({}));
-                Alert.alert("Erro", errorData.detail || "Não foi possível excluir o gasto.");
-              }
-            } catch (e) {
-              Alert.alert("Erro", "Falha de conexão.");
-            }
+    const deleteGasto = async () => {
+      try {
+        const response = await fetch(`http://localhost:8000/custos/${id}`, {
+          method: "DELETE",
+        });
+        if (response.ok) {
+          Alert.alert("Sucesso", "Gasto excluído.");
+          fetchCustos();
+        } else {
+          const errorData = await response.json().catch(() => ({}));
+          Alert.alert("Erro", errorData.detail || "Não foi possível excluir o gasto.");
+        }
+      } catch (e) {
+        Alert.alert("Erro", "Falha de conexão.");
+      }
+    };
+
+    if (Platform.OS === 'web') {
+      if (window.confirm(`Deseja realmente excluir "${descricao}"?`)) {
+        deleteGasto();
+      }
+    } else {
+      Alert.alert(
+        "Excluir Gasto",
+        `Tem certeza que deseja excluir "${descricao}"?`,
+        [
+          { text: "Cancelar", style: "cancel" },
+          {
+            text: "Excluir",
+            style: "destructive",
+            onPress: deleteGasto,
           },
-        },
-      ]
-    );
+        ]
+      );
+    }
   };
 
   // Helper para padronizar estilização por Categoria

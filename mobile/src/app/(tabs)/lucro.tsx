@@ -11,7 +11,7 @@ export default function LucroScreen() {
   const fetchResumo = async () => {
     try {
       setLoading(true);
-      const res = await fetch("http://192.168.1.117:8000/relatorios/resumo");
+      const res = await fetch("http://localhost:8000/relatorios/resumo");
       if (res.ok) {
         const data = await res.json();
         setResumoFinanceiro(data);

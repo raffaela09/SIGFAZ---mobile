@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Alert,
+  Platform
 } from "react-native";
 import { useFocusEffect, router } from "expo-router";
 import { FontAwesome, FontAwesome5, Feather } from "@expo/vector-icons";
@@ -33,7 +34,7 @@ export default function FazendasScreen() {
   const fetchFazendas = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://192.168.1.117:8000/fazendas/");
+      const response = await fetch("http://localhost:8000/fazendas/");
       if (response.ok) {
         const data = await response.json();
         setFazendas(data);
@@ -65,34 +66,42 @@ export default function FazendasScreen() {
     });
   };
 
-  const handleDelete = (id: number, nomeFazenda: string) => {
-    Alert.alert(
-      "Excluir Fazenda",
-      `Tem certeza que deseja excluir a ${nomeFazenda}?`,
-      [
-        { text: "Cancelar", style: "cancel" },
-        {
-          text: "Excluir",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              const response = await fetch(`http://192.168.1.117:8000/fazendas/${id}`, {
-                method: "DELETE",
-              });
-              if (response.ok) {
-                Alert.alert("Sucesso", "Fazenda excluída.");
-                fetchFazendas();
-              } else {
-                const errorData = await response.json().catch(() => ({}));
-                Alert.alert("Erro", errorData.detail || "Não foi possível excluir a fazenda.");
-              }
-            } catch (e) {
-              Alert.alert("Erro", "Falha de conexão.");
-            }
+  const handleDelete = (id: number, nome: string) => {
+    const deleteFazenda = async () => {
+      try {
+        const response = await fetch(`http://localhost:8000/fazendas/${id}`, {
+          method: "DELETE",
+        });
+        if (response.ok) {
+          Alert.alert("Sucesso", "Fazenda excluída.");
+          fetchFazendas();
+        } else {
+          const errorData = await response.json().catch(() => ({}));
+          Alert.alert("Erro", errorData.detail || "Não foi possível excluir a fazenda.");
+        }
+      } catch (e) {
+        Alert.alert("Erro", "Falha de conexão.");
+      }
+    };
+
+    if (Platform.OS === 'web') {
+      if (window.confirm(`Deseja realmente excluir a fazenda ${nome}?`)) {
+        deleteFazenda();
+      }
+    } else {
+      Alert.alert(
+        "Excluir Fazenda",
+        `Deseja realmente excluir a fazenda ${nome}?`,
+        [
+          { text: "Cancelar", style: "cancel" },
+          {
+            text: "Excluir",
+            style: "destructive",
+            onPress: deleteFazenda,
           },
-        },
-      ]
-    );
+        ]
+      );
+    }
   };
 
   // Filtragem local

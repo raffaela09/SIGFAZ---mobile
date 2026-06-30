@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Alert,
+  Platform
 } from "react-native";
 import { useFocusEffect, router } from "expo-router";
 import { FontAwesome, FontAwesome5, Feather } from "@expo/vector-icons";
@@ -26,7 +27,7 @@ export default function CulturasScreen() {
     try {
       setLoading(true);
       // Rota correta apontando para o seu APIRouter do backend
-      const response = await fetch("http://192.168.1.117:8000/culturas/");
+      const response = await fetch("http://localhost:8000/culturas/");
       if (response.ok) {
       const data = await response.json();
       setCulturas(data);
@@ -48,33 +49,41 @@ export default function CulturasScreen() {
   );
 
   const handleDelete = (id: number, nome: string) => {
-    Alert.alert(
-      "Excluir Ciclo de Cultivo",
-      `Deseja realmente excluir o ciclo ${nome}?`,
-      [
-        { text: "Cancelar", style: "cancel" },
-        {
-          text: "Excluir",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              const response = await fetch(`http://192.168.1.117:8000/culturas/${id}`, {
-                method: "DELETE",
-              });
-              if (response.ok) {
-                Alert.alert("Sucesso", "Ciclo excluído.");
-                fetchCulturas();
-              } else {
-                const errorData = await response.json().catch(() => ({}));
-                Alert.alert("Erro", errorData.detail || "Não foi possível excluir o ciclo de cultivo.");
-              }
-            } catch (e) {
-              Alert.alert("Erro", "Falha ao excluir.");
-            }
+    const deleteCultura = async () => {
+      try {
+        const response = await fetch(`http://localhost:8000/culturas/${id}`, {
+          method: "DELETE",
+        });
+        if (response.ok) {
+          Alert.alert("Sucesso", "Ciclo excluído.");
+          fetchCulturas();
+        } else {
+          const errorData = await response.json().catch(() => ({}));
+          Alert.alert("Erro", errorData.detail || "Não foi possível excluir o ciclo de cultivo.");
+        }
+      } catch (e) {
+        Alert.alert("Erro", "Falha ao excluir.");
+      }
+    };
+
+    if (Platform.OS === 'web') {
+      if (window.confirm(`Deseja realmente excluir o ciclo ${nome}?`)) {
+        deleteCultura();
+      }
+    } else {
+      Alert.alert(
+        "Excluir Ciclo de Cultivo",
+        `Deseja realmente excluir o ciclo ${nome}?`,
+        [
+          { text: "Cancelar", style: "cancel" },
+          {
+            text: "Excluir",
+            style: "destructive",
+            onPress: deleteCultura,
           },
-        },
-      ]
-    );
+        ]
+      );
+    }
   };
 
   // Filtragem corrigida baseando-se estritamente na estrutura retornada por SELECT * FROM Cultura

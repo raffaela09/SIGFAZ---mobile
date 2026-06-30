@@ -50,8 +50,8 @@ export default function NewFazendaScreen() {
     try {
       const response = await fetch(
         editing
-          ? `http://192.168.1.117:8000/fazendas/${params.id}`
-          : "http://192.168.1.117:8000/fazendas/",
+          ? `http://localhost:8000/fazendas/${params.id}`
+          : "http://localhost:8000/fazendas/",
         {
           method: editing ? "PUT" : "POST",
           headers: {

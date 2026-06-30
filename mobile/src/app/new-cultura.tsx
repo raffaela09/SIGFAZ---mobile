@@ -50,10 +50,10 @@ export default function NovaCultura() {
 
     try {
       // Alterado para usar POST ou PUT conforme presença de id
-      let url = "http://192.168.1.117:8000/culturas/";
+      let url = "http://localhost:8000/culturas/";
       let method = "POST";
       if (culturaId) {
-        url = `http://192.168.1.117:8000/culturas/${culturaId}`;
+        url = `http://localhost:8000/culturas/${culturaId}`;
         method = "PUT";
       }
 

@@ -1,6 +1,6 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import { ScrollView, StyleSheet, Text, TextInput, View, ActivityIndicator, TouchableOpacity, Modal, Alert } from "react-native";
+import { ScrollView, StyleSheet, Text, TextInput, View, ActivityIndicator, TouchableOpacity, Modal, Alert, Platform } from "react-native";
 import { useCallback, useState } from "react";
 import { useFocusEffect, router } from "expo-router";
 import TalhaoCard from "../components/Container";
@@ -20,7 +20,7 @@ export default function Tab() {
   const fetchTalhoes = async () => {
     try {
       setLoading(true);
-      const API_URL = "http://192.168.1.117:8000/talhoes/";
+      const API_URL = "http://localhost:8000/talhoes/";
       const response = await fetch(API_URL);
       if (response.ok) {
         const data = await response.json();
@@ -50,7 +50,7 @@ export default function Tab() {
   const saveAtividade = async () => {
     if(!atividadeDesc) return;
     try {
-      await fetch("http://192.168.1.117:8000/atividades/", {
+      await fetch("http://localhost:8000/atividades/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -148,29 +148,33 @@ export default function Tab() {
                   setAtividadeModalVisible(true);
                 }}
                 onDelete={() => {
-                  Alert.alert(
-                    "Excluir Talhão",
-                    `Deseja realmente excluir este talhão?`,
-                    [
-                      { text: "Cancelar", style: "cancel" },
-                      { 
-                        text: "Excluir", 
-                        style: "destructive",
-                        onPress: async () => {
-                          try {
-                            const response = await fetch(`http://192.168.1.117:8000/talhoes/${id}`, { method: 'DELETE' });
-                            if(response.ok) {
-                              fetchTalhoes();
-                            } else {
-                              Alert.alert("Erro", "Não foi possível excluir.");
-                            }
-                          } catch (e) {
-                            Alert.alert("Erro", "Falha ao excluir.");
-                          }
-                        } 
+                  const deleteTalhao = async () => {
+                    try {
+                      const response = await fetch(`http://localhost:8000/talhoes/${id}`, { method: 'DELETE' });
+                      if(response.ok) {
+                        fetchTalhoes();
+                      } else {
+                        Alert.alert("Erro", "Não foi possível excluir.");
                       }
-                    ]
-                  );
+                    } catch (e) {
+                      Alert.alert("Erro", "Falha ao excluir.");
+                    }
+                  };
+
+                  if (Platform.OS === 'web') {
+                    if (window.confirm("Deseja realmente excluir este talhão?")) {
+                      deleteTalhao();
+                    }
+                  } else {
+                    Alert.alert(
+                      "Excluir Talhão",
+                      `Deseja realmente excluir este talhão?`,
+                      [
+                        { text: "Cancelar", style: "cancel" },
+                        { text: "Excluir", style: "destructive", onPress: deleteTalhao }
+                      ]
+                    );
+                  }
                 }}
               />
             );

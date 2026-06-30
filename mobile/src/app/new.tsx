@@ -78,11 +78,11 @@ export default function Tab() {
       };
 
       // Utilizando o IP da sua máquina na rede (funciona tanto no emulador quanto no celular)
-      let API_URL = "http://192.168.1.117:8000/talhoes/";
+      let API_URL = "http://localhost:8000/talhoes/";
       let method = "POST";
       
       if (talhaoId) {
-        API_URL = `http://192.168.1.117:8000/talhoes/${talhaoId}`;
+        API_URL = `http://localhost:8000/talhoes/${talhaoId}`;
         method = "PUT";
       }
       

@@ -20,7 +20,7 @@ export default function Tab() {
 
   useFocusEffect(
     useCallback(() => {
-      fetch("http://192.168.1.117:8000/dashboard/")
+      fetch("http://localhost:8000/dashboard/")
         .then(res => res.json())
         .then(data => { if (data) setDashboardData(data); })
         .catch(err => console.log('Erro ao buscar dashboard:', err));
