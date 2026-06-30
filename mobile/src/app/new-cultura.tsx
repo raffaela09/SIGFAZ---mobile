@@ -17,21 +17,21 @@ export default function NovaCultura() {
   const [culturaId, setCulturaId] = useState<number | null>(null);
 
   useEffect(() => {
-    const data = (params as any).culturaData || (params as any).talhaoData;
-    if (data) {
-      try {
-        const item = JSON.parse(data as string);
-        // item structure: [id, nome, safra, ...] or talhao structure used elsewhere
-        setCulturaId(item.id || item[0]);
-        setNome(item.nome || item[1] || item.tipocultura || "");
-        setSafra(item.safra || item[2] || "");
-        setArea(item.area?.toString() || item[4]?.toString() || item[1]?.toString() || "");
-        setDataPlantio(item[3] || "");
-      } catch (e) {
-        console.error("Erro ao carregar dados da cultura", e);
-      }
+    if (!params.culturaData) return;
+
+    try {
+      const item = JSON.parse(params.culturaData as string);
+
+      setCulturaId(item[0]);
+      setNome(item[1] ?? "");
+      setSafra(item[2] ?? "");
+      setArea(item[3]?.toString() ?? "");
+      setStatus(item[4] ?? "Plantio");
+      setDataPlantio(item[5] ?? "");
+    } catch (error) {
+      console.error(error);
     }
-  }, [params.culturaData, params.talhaoData]);
+  }, [params.culturaData]);
 
   const handleSave = async () => {
     if (!nome || !safra || !area) {

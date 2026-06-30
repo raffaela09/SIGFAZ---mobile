@@ -30,6 +30,7 @@ export default function CulturasScreen() {
       const response = await fetch("http://localhost:8000/culturas/");
       if (response.ok) {
       const data = await response.json();
+      console.log("Culturas:", data);
       setCulturas(data);
       } else {
         Alert.alert("Erro", "Não foi possível carregar as culturas do servidor.");
@@ -182,13 +183,13 @@ export default function CulturasScreen() {
           <Text style={styles.emptyText}>Nenhum ciclo encontrado.</Text>
         ) : (
           filteredCulturas.map((item, index) => {
-            const id = item.id;
-            const cultura = item.nome || "Não informada";
-            const safra = item.safra || "Não informada";
-            
-            const area = item.area ?? 45; 
-            const status = item.status || "Crescimento";
-            const dataPlantio = item.data_plantio || "Não informada";
+            const id = item[0];
+            const cultura = item[1] ?? "Não informada";
+            const safra = item[2] ?? "Não informada";
+
+            const area = item[3] ?? 45;
+            const status = item[4] ?? "Crescimento";
+            const dataPlantio = item[5] ?? "";
             const rendimentoMedio = 65;
             const producaoEstimada = Math.round(area * rendimentoMedio);
 
@@ -220,7 +221,9 @@ export default function CulturasScreen() {
                     <View style={styles.detailCol}>
                       <Text style={styles.detailLabel}>Plantio Est.</Text>
                       <Text style={styles.detailValue}>
-                        {String(dataPlantio).split("-").reverse().join("/")}
+                        {dataPlantio
+                          ? dataPlantio.split("-").reverse().join("/")
+                          : "Não informada"}
                       </Text>
                     </View>
                   </View>
