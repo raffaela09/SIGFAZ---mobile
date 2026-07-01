@@ -485,3 +485,8 @@
 {"_e":"metro:bundling:progress","_t":1782784179300,"id":"k","progress":0,"total":1,"current":0}
 {"_e":"metro:bundling:done","_t":1782784179599,"id":"k","total":1,"ms":340.0927}
 {"_e":"metro:client_log","_t":1782784185052,"level":"warn","data":["Cannot record touch end without a touch start.\n","Touch End: {\"identifier\":0,\"pageX\":1124,\"pageY\":307,\"timestamp\":15499}\n","Touch Bank: []"]}
+{"_e":"root:init","_t":1782865815330,"format":"v0-jsonl","version":"56.1.16"}
+{"_e":"env:mode","_t":1782865815331,"nodeEnv":"development","babelEnv":"development","mode":"development"}
+{"_e":"env:load","_t":1782865815373,"mode":"development","files":[],"env":{}}
+{"_e":"devserver:start","_t":1782865818112,"mode":"development","web":true,"baseUrl":"","asyncRoutes":false,"routerRoot":"../..\\..\\src\\app","serverComponents":false,"serverActions":false,"serverRendering":true,"apiRoutes":false,"exporting":false}
+{"_e":"metro:config","_t":1782865822791,"serverRoot":"../..\\..","projectRoot":"../..\\..","exporting":false,"flags":{"autolinkingModuleResolution":false,"serverActions":false,"serverComponents":false,"reactCompiler":true,"optimizeGraph":false,"treeshaking":false,"logbox":false}}
