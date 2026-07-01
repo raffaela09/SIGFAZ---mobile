@@ -27,12 +27,43 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="new"
+        options={{
+          title: 'Cadastro de Talhão',
+          tabBarIcon: ({ color }) => (
+          <FontAwesome5 
+          size={20} 
+          name="plus-circle" 
+          color={color} />
+          ),
+        }}
+      />
+      
+      <Tabs.Screen
         name="insumos"
-        options={{ href: null }}
+        options={{
+          title: "Insumos",
+          tabBarIcon: ({ color }) => (
+            <FontAwesome5
+              size={20}
+              name="flask"
+              color={color}
+            />
+          ),
+        }}
       />
       <Tabs.Screen
         name="maquinas"
-        options={{ href: null }}
+        options={{ 
+          title: "Máquinas",
+          tabBarIcon: ({ color }) => (
+            <FontAwesome5
+              size={20}
+              name="tractor"
+              color={color}
+            />
+          ),
+        }}
       />
       <Tabs.Screen
         name="culturas"

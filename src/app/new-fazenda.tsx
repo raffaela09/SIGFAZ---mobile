@@ -13,6 +13,7 @@ import { Feather } from "@expo/vector-icons";
 import Header from "./components/Header";
 import Input from "./components/Input";
 import Button from "./components/Button";
+import { API_BASE } from "@/constants/api";
 
 export default function NewFazendaScreen() {
   const params = useLocalSearchParams();
@@ -50,8 +51,8 @@ export default function NewFazendaScreen() {
     try {
       const response = await fetch(
         editing
-          ? `http://localhost:8000/fazendas/${params.id}`
-          : "http://localhost:8000/fazendas/",
+          ? `${API_BASE}/fazendas/${params.id}`
+          : `${API_BASE}/fazendas/`,
         {
           method: editing ? "PUT" : "POST",
           headers: {

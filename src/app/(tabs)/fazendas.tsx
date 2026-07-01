@@ -15,6 +15,7 @@ import { FontAwesome, FontAwesome5, Feather } from "@expo/vector-icons";
 import Header from "../components/Header";
 import Pill from "../components/Pill";
 import FloatingButton from "../components/FloatingButton";
+import { API_BASE } from "@/constants/api";
 
 interface Fazenda {
   id: number;
@@ -34,7 +35,7 @@ export default function FazendasScreen() {
   const fetchFazendas = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:8000/fazendas/");
+      const response = await fetch(`${API_BASE}/fazendas/`);
       if (response.ok) {
         const data = await response.json();
         setFazendas(data);
@@ -69,7 +70,7 @@ export default function FazendasScreen() {
   const handleDelete = (id: number, nome: string) => {
     const deleteFazenda = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/fazendas/${id}`, {
+        const response = await fetch(`${API_BASE}/fazendas/${id}`, {
           method: "DELETE",
         });
         if (response.ok) {

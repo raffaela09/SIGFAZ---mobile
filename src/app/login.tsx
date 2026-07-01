@@ -2,8 +2,8 @@ import React from "react";
 import { View, Text, StyleSheet, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import Input from "../components/Input";
-import Button from "../components/Button";
+import Input from "./components/Input";
+import Button from "./components/Button";
 
 export default function Login() {
   const handleLogin = () => {

@@ -1,9 +1,212 @@
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { Feather, FontAwesome5 } from '@expo/vector-icons';
+import { router } from 'expo-router';
+import { useFocusEffect } from 'expo-router';
+import { useCallback } from 'react';
+import { API_BASE } from '@/constants/api';
 
 export default function Tab() {
+  const [dashboardData, setDashboardData] = useState({
+    areaTotal: 0,
+    producaoEst: 0,
+    graficoProdutividade: [30, 25, 40, 35, 50, 60],
+    graficoCustos: [
+      { nome: "Sementes", valor: 40 },
+      { nome: "Fertil.", valor: 80 },
+      { nome: "Mão Obra", valor: 50 },
+      { nome: "Combust.", valor: 30 }
+    ]
+  });
+
+  useFocusEffect(
+    useCallback(() => {
+      fetch(`${API_BASE}/dashboard/`)
+        .then(res => res.json())
+        .then(data => { if (data) setDashboardData(data); })
+        .catch(err => console.log('Erro ao buscar dashboard:', err));
+    }, [])
+  );
   return (
     <View style={styles.container}>
-      <Text>home</Text>
+      {/* Header */}
+      <View style={styles.header}>
+        <View style={styles.headerLeft}>
+          <View style={styles.headerIconBox}>
+            <FontAwesome5 name="seedling" size={16} color="#FFFFFF" />
+          </View>
+          <Text style={styles.headerTitle}>Dashboard</Text>
+        </View>
+        <TouchableOpacity>
+          <Feather name="bell" size={24} color="#6B7280" />
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        {/* Greeting */}
+        <View style={styles.greetingSection}>
+          <Text style={styles.greetingTitle}>Olá, Fazendeiro!</Text>
+          <Text style={styles.greetingSubtitle}>Aqui está o resumo da Fazenda Progresso.</Text>
+        </View>
+
+        {/* Indicadores Chave */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>INDICADORES CHAVE</Text>
+            <TouchableOpacity>
+              <Text style={styles.seeAllText}>Ver Todos</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.kpiContainer}>
+            <View style={styles.kpiCard}>
+              <View style={styles.kpiCardHeader}>
+                <View style={styles.kpiIconContainer}>
+                  <FontAwesome5 name="map" size={16} color="#22C358FF" />
+                </View>
+                <View style={styles.kpiTag}>
+                  <Text style={styles.kpiTagText}>+2%</Text>
+                </View>
+              </View>
+              <Text style={styles.kpiLabel}>Área Total</Text>
+              <Text style={styles.kpiValue}>{dashboardData?.areaTotal || 0} ha</Text>
+            </View>
+
+            <View style={styles.kpiCard}>
+              <View style={styles.kpiCardHeader}>
+                <View style={styles.kpiIconContainer}>
+                  <FontAwesome5 name="seedling" size={16} color="#22C358FF" />
+                </View>
+                <View style={styles.kpiTag}>
+                  <Text style={styles.kpiTagText}>+5%</Text>
+                </View>
+              </View>
+              <Text style={styles.kpiLabel}>Produção Est.</Text>
+              <Text style={styles.kpiValue}>{dashboardData?.producaoEst || 0} t</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Acesso Rápido */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>ACESSO RÁPIDO</Text>
+          <View style={styles.quickAccessGrid}>
+            <TouchableOpacity 
+              style={styles.quickAccessCard} 
+              onPress={() => router.push('/talhoes')}
+            >
+              <View style={styles.quickAccessIcon}>
+                <FontAwesome5 name="truck" size={18} color="#FFFFFF" />
+              </View>
+              <Text style={styles.quickAccessText}>Talhões</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.quickAccessCard}>
+              <View style={styles.quickAccessIcon}>
+                <FontAwesome5 name="box" size={18} color="#FFFFFF" />
+              </View>
+              <Text style={styles.quickAccessText}>Máquinas</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.quickAccessCard}>
+              <View style={styles.quickAccessIcon}>
+                <FontAwesome5 name="seedling" size={18} color="#FFFFFF" />
+              </View>
+              <Text style={styles.quickAccessText}>Insumos</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.quickAccessCard} onPress={() => router.push('/new')}>
+              <View style={styles.quickAccessIcon}>
+                <FontAwesome5 name="plus" size={18} color="#FFFFFF" />
+              </View>
+              <Text style={styles.quickAccessText}>Novo Talhão</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Análise de Desempenho */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>ANÁLISE DE DESEMPENHO</Text>
+          
+          <View style={styles.chartCard}>
+            <View style={styles.chartHeader}>
+              <View>
+                <Text style={styles.chartTitle}>Produtividade</Text>
+                <Text style={styles.chartSubtitle}>Evolução mensal (ton)</Text>
+              </View>
+              <Text style={styles.chartValuePos}>+15%</Text>
+            </View>
+            <View style={styles.chartMock}>
+              <View style={styles.lineChartMock}>
+                {(dashboardData?.graficoProdutividade || []).map((val: any, idx: number) => (
+                  <View key={idx} style={[styles.barMock, { height: val, backgroundColor: '#4ade80' }]} />
+                ))}
+              </View>
+              <View style={styles.chartXAxis}>
+                <Text style={styles.chartXAxisText}>Fev</Text>
+                <Text style={styles.chartXAxisText}>Mar</Text>
+                <Text style={styles.chartXAxisText}>Abr</Text>
+                <Text style={styles.chartXAxisText}>Mai</Text>
+                <Text style={styles.chartXAxisText}>Jun</Text>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.chartCard}>
+            <View style={styles.chartHeader}>
+              <View>
+                <Text style={styles.chartTitle}>Distribuição de Custos</Text>
+                <Text style={styles.chartSubtitle}>Por categoria (R$ mil)</Text>
+              </View>
+            </View>
+            <View style={styles.chartMock}>
+              <View style={styles.barChartMock}>
+                {(dashboardData?.graficoCustos || []).map((item: any, idx: number) => (
+                  <View key={idx} style={styles.barColumn}>
+                    <View style={[styles.bar, { height: item.valor }]} />
+                    <Text style={styles.chartXAxisText}>{item.nome}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          </View>
+        </View>
+
+        {/* Alertas Recentes */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>ALERTAS RECENTES</Text>
+            <View style={styles.badgeDanger}>
+              <Text style={styles.badgeDangerText}>2 Críticos</Text>
+            </View>
+          </View>
+
+          <TouchableOpacity style={styles.alertCard}>
+            <View style={styles.alertIconBox}>
+              <Feather name="alert-triangle" size={16} color="#1F2937" />
+            </View>
+            <View style={styles.alertContent}>
+              <View style={styles.alertHeader}>
+                <Text style={styles.alertTitle}>Estoque Baixo: Fertilizante NPK</Text>
+                <Text style={styles.alertTime}>Hoje,{'\n'}09:45</Text>
+              </View>
+              <Text style={styles.alertText}>Verifique o status no módulo de inventário.</Text>
+            </View>
+            <Feather name="chevron-right" size={20} color="#9CA3AF" />
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.alertCard}>
+            <View style={styles.alertIconBox}>
+              <Feather name="alert-triangle" size={16} color="#1F2937" />
+            </View>
+            <View style={styles.alertContent}>
+              <View style={styles.alertHeader}>
+                <Text style={styles.alertTitle}>Manutenção Pendente: Trator</Text>
+                <Text style={styles.alertTime}>Ontem,{'\n'}17:20</Text>
+              </View>
+              <Text style={styles.alertText}>Verifique o status no módulo de inventário.</Text>
+            </View>
+            <Feather name="chevron-right" size={20} color="#9CA3AF" />
+          </TouchableOpacity>
+        </View>
+        
+      </ScrollView>
     </View>
   );
 }

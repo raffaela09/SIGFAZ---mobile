@@ -15,6 +15,7 @@ import { FontAwesome, FontAwesome5, Feather } from "@expo/vector-icons";
 import Header from "../components/Header";
 import Pill from "../components/Pill";
 import FloatingButton from "../components/FloatingButton";
+import { API_BASE } from "@/constants/api";
 
 export default function CulturasScreen() {
   const [culturas, setCulturas] = useState<any[]>([]);
@@ -27,7 +28,7 @@ export default function CulturasScreen() {
     try {
       setLoading(true);
       // Rota correta apontando para o seu APIRouter do backend
-      const response = await fetch("http://localhost:8000/culturas/");
+      const response = await fetch(`${API_BASE}/culturas/`);
       if (response.ok) {
       const data = await response.json();
       console.log("Culturas:", data);
@@ -52,7 +53,7 @@ export default function CulturasScreen() {
   const handleDelete = (id: number, nome: string) => {
     const deleteCultura = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/culturas/${id}`, {
+        const response = await fetch(`${API_BASE}/culturas/${id}`, {
           method: "DELETE",
         });
         if (response.ok) {

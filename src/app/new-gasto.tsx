@@ -13,6 +13,7 @@ import { Feather } from "@expo/vector-icons";
 import Header from "./components/Header";
 import Button from "./components/Button";
 import Input from "./components/Input";
+import { API_BASE } from "@/constants/api";
 
 export default function NovoGasto() {
   const [categoria, setCategoria] = useState("Insumos");
@@ -27,7 +28,7 @@ export default function NovoGasto() {
     }
 
     try {
-      const response = await fetch("http://localhost:8000/custos/", {
+      const response = await fetch(`${API_BASE}/custos/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

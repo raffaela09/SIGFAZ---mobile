@@ -1,12 +1,11 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import { ScrollView, StyleSheet, Text, TextInput, View, ActivityIndicator, TouchableOpacity, Modal, Alert, Platform } from "react-native";
+import { ScrollView, StyleSheet, Text, TextInput, View, ActivityIndicator, TouchableOpacity, Modal, Alert } from "react-native";
 import { useCallback, useState } from "react";
 import { useFocusEffect, router } from "expo-router";
 import TalhaoCard from "../components/Container";
 import Header from "../components/Header";
 import Pill from "../components/Pill";
-import FloatingButton from "../components/FloatingButton";
 import { API_BASE } from "../../constants/api";
 
 export default function Tab() {
@@ -40,11 +39,10 @@ export default function Tab() {
     }, [])
   );
 
-  // Filtra os talhões de acordo com o texto digitado na busca (baseado na cultura/nome) e filtro
-  const filteredTalhoes = (talhoes || []).filter((item) => {
-    const nomeOuCultura = item.tipocultura ? item.tipocultura.toLowerCase() : "";
+  const filteredTalhoes = talhoes.filter((item) => {
+    const nomeOuCultura = item[2] ? item[2].toLowerCase() : "";
     const matchesSearch = nomeOuCultura.includes(searchText.toLowerCase());
-    const matchesFiltro = selectedFiltro === "Todos" || (item.tipocultura && item.tipocultura.toLowerCase() === selectedFiltro.toLowerCase());
+    const matchesFiltro = selectedFiltro === "Todos" || (item[2] && item[2].toLowerCase() === selectedFiltro.toLowerCase());
     return matchesSearch && matchesFiltro;
   });
 
@@ -123,16 +121,15 @@ export default function Tab() {
           <Text style={{ marginTop: 20, color: "#6B7280" }}>Nenhum talhão encontrado.</Text>
         ) : (
           filteredTalhoes.map((item, index) => {
-            const id = item.id;
-            const area = item.area;
-            const cultura = item.tipocultura;
-            const volume = item.volumeestimado || 0;
-            const nomeTalhao = item.nome || cultura || `Talhão #${id}`;
+            const id = item[0];
+            const area = item[1];
+            const cultura = item[2];
+            const volume = item[4];
 
             return (
               <TalhaoCard
                 key={id || index}
-                nome={nomeTalhao}
+                nome={cultura || `Talhão #${id}`}
                 area={`${area} ha`}
                 coordenadas="Lat: --, Lng: --"
                 status="Ativo"
@@ -149,33 +146,29 @@ export default function Tab() {
                   setAtividadeModalVisible(true);
                 }}
                 onDelete={() => {
-                  const deleteTalhao = async () => {
-                    try {
-                      const response = await fetch(`${API_BASE}/talhoes/${id}`, { method: 'DELETE' });
-                      if(response.ok) {
-                        fetchTalhoes();
-                      } else {
-                        Alert.alert("Erro", "Não foi possível excluir.");
+                  Alert.alert(
+                    "Excluir Talhão",
+                    `Deseja realmente excluir este talhão?`,
+                    [
+                      { text: "Cancelar", style: "cancel" },
+                      { 
+                        text: "Excluir", 
+                        style: "destructive",
+                        onPress: async () => {
+                          try {
+                            const response = await fetch(`${API_BASE}/talhoes/${id}`, { method: 'DELETE' });
+                            if(response.ok) {
+                              fetchTalhoes();
+                            } else {
+                              Alert.alert("Erro", "Não foi possível excluir.");
+                            }
+                          } catch (e) {
+                            Alert.alert("Erro", "Falha ao excluir.");
+                          }
+                        } 
                       }
-                    } catch (e) {
-                      Alert.alert("Erro", "Falha ao excluir.");
-                    }
-                  };
-
-                  if (Platform.OS === 'web') {
-                    if (window.confirm("Deseja realmente excluir este talhão?")) {
-                      deleteTalhao();
-                    }
-                  } else {
-                    Alert.alert(
-                      "Excluir Talhão",
-                      `Deseja realmente excluir este talhão?`,
-                      [
-                        { text: "Cancelar", style: "cancel" },
-                        { text: "Excluir", style: "destructive", onPress: deleteTalhao }
-                      ]
-                    );
-                  }
+                    ]
+                  );
                 }}
               />
             );
@@ -183,9 +176,6 @@ export default function Tab() {
         )}
       </ScrollView>
 
-      <FloatingButton onPress={() => router.push("/new")} />
-
-      {/* Modal de Atividade */}
       <Modal visible={atividadeModalVisible} transparent={true} animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
@@ -289,21 +279,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#22C358FF',
     padding: 10,
     borderRadius: 8,
-  }, 
-  fab: {
-    position: "absolute",
-    right: 20,
-    bottom: 20,
-    backgroundColor: "#22C358FF",
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    elevation: 5,
-  },
+  }
 });

@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, Text, View, ActivityIndicator, TouchableOpacity
 import { useFocusEffect } from "expo-router";
 import { FontAwesome5, Feather } from "@expo/vector-icons";
 import Header from "../components/Header";
+import { API_BASE } from "@/constants/api";
 
 export default function LucroScreen() {
   const [loading, setLoading] = useState(true);
@@ -11,7 +12,7 @@ export default function LucroScreen() {
   const fetchResumo = async () => {
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:8000/relatorios/resumo");
+      const res = await fetch(`${API_BASE}/relatorios/resumo`);
       if (res.ok) {
         const data = await res.json();
         setResumoFinanceiro(data);

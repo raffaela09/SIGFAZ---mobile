@@ -15,6 +15,7 @@ import { FontAwesome5, Feather } from "@expo/vector-icons";
 import Header from "../components/Header";
 import Pill from "../components/Pill";
 import FloatingButton from "../components/FloatingButton";
+import { API_BASE } from "@/constants/api";
 
 interface Custo {
   id: number;
@@ -38,7 +39,7 @@ export default function GastosScreen() {
   const fetchCustos = async () => {
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:8000/custos/");
+      const res = await fetch(`${API_BASE}/custos/`);
       if (res.ok) {
         const data = await res.json();
         setCustos(data || []);
@@ -75,7 +76,7 @@ export default function GastosScreen() {
   const handleDeleteGasto = (id: number, descricao: string) => {
     const deleteGasto = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/custos/${id}`, {
+        const response = await fetch(`${API_BASE}/custos/${id}`, {
           method: "DELETE",
         });
         if (response.ok) {

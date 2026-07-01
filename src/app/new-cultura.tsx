@@ -6,6 +6,7 @@ import { Feather, FontAwesome5 } from "@expo/vector-icons";
 import Header from "./components/Header";
 import Button from "./components/Button";
 import Input from "./components/Input";
+import { API_BASE } from "@/constants/api";
 
 export default function NovaCultura() {
   const params = useLocalSearchParams();
@@ -50,10 +51,10 @@ export default function NovaCultura() {
 
     try {
       // Alterado para usar POST ou PUT conforme presença de id
-      let url = "http://localhost:8000/culturas/";
+      let url = `${API_BASE}/culturas/`;
       let method = "POST";
       if (culturaId) {
-        url = `http://localhost:8000/culturas/${culturaId}`;
+        url = `${API_BASE}/culturas/${culturaId}`;
         method = "PUT";
       }
 
