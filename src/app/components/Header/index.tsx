@@ -1,6 +1,7 @@
 import styles from './style'
 import { View, Text, Pressable } from 'react-native'
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { router } from 'expo-router';
 
 interface HeaderProps {
     title: string,
@@ -11,7 +12,7 @@ export default function Header({title, icon}: HeaderProps) {
     return (
        <View style={styles.container}>
             <View style={styles.boxLeft}>
-                <Pressable>
+                <Pressable onPress={() => router.back()}>
                     <Ionicons name="chevron-back-sharp" size={20} color="#565D6DFF" />
                 </Pressable>
                 <Text style={styles.title}>{title}</Text>

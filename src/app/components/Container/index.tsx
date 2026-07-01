@@ -12,6 +12,7 @@ interface TalhaoCardProps {
   estimativa: string;
   onEdit: () => void;
   onAtividade: () => void;
+  onDelete?: () => void;
 }
 
 export default function TalhaoCard({
@@ -23,6 +24,7 @@ export default function TalhaoCard({
   estimativa,
   onEdit,
   onAtividade,
+  onDelete,
 }: TalhaoCardProps) {
   return (
     <View style={styles.card}>
@@ -80,6 +82,17 @@ export default function TalhaoCard({
           <Feather name="activity" size={16} color="#374151" />
           <Text style={styles.footerButtonText}>Atividade</Text>
         </TouchableOpacity>
+
+        {onDelete && (
+          <>
+            <View style={styles.verticalDivider} />
+
+            <TouchableOpacity style={styles.footerButton} onPress={onDelete}>
+              <Feather name="trash-2" size={16} color="#EF4444" />
+              <Text style={[styles.footerButtonText, { color: "#EF4444" }]}>Excluir</Text>
+            </TouchableOpacity>
+          </>
+        )}
       </View>
     </View>
   );

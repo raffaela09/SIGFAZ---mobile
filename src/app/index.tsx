@@ -4,7 +4,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import Input from "./components/Input";
 import Button from "./components/Button";
-import { API_BASE } from "../constants/api";
+import { API_BASE } from "../constants/api"; // ✓ Importação dinâmica mantida
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -22,7 +22,7 @@ export default function Login() {
       }
 
       const payload = { email, senha };
-      const API_URL = `${API_BASE}/auth/login`;
+      const API_URL = `${API_BASE}/auth/login`; // ✓ URL baseável mantida
 
       const response = await fetch(API_URL, {
         method: "POST",
@@ -35,8 +35,9 @@ export default function Login() {
       } else {
         Alert.alert("Erro", "Falha no login. Verifique suas credenciais.");
       }
-    } catch {
-      router.replace("/(tabs)");
+    } catch (error: any) {
+      // ✓ Tratamento de erro seguro restaurado do primeiro código
+      Alert.alert("Erro de conexão", error.message || "Não foi possível conectar ao servidor.");
     }
   };
 
@@ -47,10 +48,12 @@ export default function Login() {
         style={styles.keyboardView}
       >
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          {/* Watermark Background */}
           <View style={styles.watermarkContainer}>
             <MaterialCommunityIcons name="tractor" size={400} color="rgba(22, 163, 74, 0.03)" />
           </View>
 
+          {/* Header / Logo */}
           <View style={styles.header}>
             <View style={styles.logoContainer}>
               <View style={styles.logoInnerSquare}>
@@ -61,6 +64,7 @@ export default function Login() {
             <Text style={styles.subtitle}>Gestão inteligente para sua fazenda</Text>
           </View>
 
+          {/* Form */}
           <View style={styles.form}>
             <Input
               label="Usuário ou e-mail"
@@ -92,6 +96,7 @@ export default function Login() {
             />
           </View>
 
+          {/* Footer */}
           <View style={styles.footer}>
             <Text style={styles.footerText}>Ainda não tem uma conta?</Text>
             <Button
@@ -102,6 +107,7 @@ export default function Login() {
             />
           </View>
 
+          {/* Version */}
           <View style={styles.versionContainer}>
             <Text style={styles.versionText}>VERSÃO 2.4.0 • SIGFAZ SYSTEM</Text>
           </View>
@@ -114,7 +120,7 @@ export default function Login() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F0FDF4",
+    backgroundColor: "#F0FDF4", // Green 50 background
   },
   keyboardView: {
     flex: 1,
@@ -140,7 +146,7 @@ const styles = StyleSheet.create({
     width: 96,
     height: 96,
     borderRadius: 48,
-    backgroundColor: "#D1FAE5",
+    backgroundColor: "#D1FAE5", // Green 100
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 24,
@@ -148,7 +154,7 @@ const styles = StyleSheet.create({
   logoInnerSquare: {
     width: 64,
     height: 64,
-    backgroundColor: "#34D399",
+    backgroundColor: "#34D399", // Emerald 400
     borderRadius: 8,
     borderWidth: 2,
     borderColor: "#A7F3D0",
@@ -182,7 +188,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   createAccountButton: {
-    borderColor: "#A7F3D0",
+    borderColor: "#A7F3D0", // Lighter green border
     borderWidth: 1,
   },
   versionContainer: {
