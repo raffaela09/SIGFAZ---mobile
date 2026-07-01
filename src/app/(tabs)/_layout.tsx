@@ -1,7 +1,6 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import { Color, Tabs } from 'expo-router';
-import { ColorProperties } from 'react-native-reanimated/lib/typescript/Colors';
+import { Tabs } from 'expo-router';
 
 export default function TabLayout() {
   return (
@@ -9,36 +8,82 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="home" color={color} />,
+          title: 'Início',
+          tabBarIcon: ({ color }) => <FontAwesome size={22} name="home" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="fazendas"
+        options={{
+          title: 'Fazendas',
+          tabBarIcon: ({ color }) => <FontAwesome5 size={20} name="map-marked-alt" color={color} />,
         }}
       />
       <Tabs.Screen
         name="talhoes"
         options={{
-          title: 'Talhões',
-          tabBarIcon: ({ color }) => <FontAwesome5 size={28} name="layer-group" color={color} />,
+          title: 'Talhoes',
+          tabBarIcon: ({ color }) => <FontAwesome5 size={20} name="layer-group" color={color} />,
         }}
       />
       <Tabs.Screen
         name="new"
         options={{
-          title: 'Novo',
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="plus-circle" color={color} />,
+          title: 'Cadastro de Talhão',
+          tabBarIcon: ({ color }) => (
+          <FontAwesome5 
+          size={20} 
+          name="plus-circle" 
+          color={color} />
+          ),
+        }}
+      />
+      
+      <Tabs.Screen
+        name="insumos"
+        options={{
+          title: "Insumos",
+          tabBarIcon: ({ color }) => (
+            <FontAwesome5
+              size={20}
+              name="flask"
+              color={color}
+            />
+          ),
         }}
       />
       <Tabs.Screen
-        name="relatorios"
-        options={{
-          title: 'Relatórios',
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="bar-chart" color={color} />,
+        name="maquinas"
+        options={{ 
+          title: "Máquinas",
+          tabBarIcon: ({ color }) => (
+            <FontAwesome5
+              size={20}
+              name="tractor"
+              color={color}
+            />
+          ),
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name="culturas"
         options={{
-          title: 'Perfil',
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="user" color={color} />,
+          title: 'Culturas',
+          tabBarIcon: ({ color }) => <FontAwesome5 size={20} name="seedling" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="gastos"
+        options={{
+          title: 'Gastos',
+          tabBarIcon: ({ color }) => <FontAwesome size={22} name="money" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="lucro"
+        options={{
+          title: 'Lucro',
+          tabBarIcon: ({ color }) => <FontAwesome size={22} name="bar-chart" color={color} />,
         }}
       />
     </Tabs>
