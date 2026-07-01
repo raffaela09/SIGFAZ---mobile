@@ -1,7 +1,6 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import { Color, Tabs } from 'expo-router';
-import { ColorProperties } from 'react-native-reanimated/lib/typescript/Colors';
+import { Tabs } from 'expo-router';
 
 export default function TabLayout() {
   return (
@@ -19,6 +18,14 @@ export default function TabLayout() {
           title: 'Talhões',
           tabBarIcon: ({ color }) => <FontAwesome5 size={28} name="layer-group" color={color} />,
         }}
+      />
+      <Tabs.Screen
+        name="insumos"
+        options={{ href: null }}
+      />
+      <Tabs.Screen
+        name="maquinas"
+        options={{ href: null }}
       />
       <Tabs.Screen
         name="new"
